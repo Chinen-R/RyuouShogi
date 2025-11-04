@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+    api: #backend
+        build: ./backend
+        image: ryuoushogi/api:latest
+        container_name: ryuoushogi_api
+        ports:
+            - "8000:8000"
+    ryuoushogi: #frontend
+      image: ryuoushogi/ryuoushogi:latest
+      container_name: ryuoushogi
+      ports:
+        - "8080:80"
+    volumes:
+      - ./backend/app
+      - ./engines/app/engines
+    restart: always
