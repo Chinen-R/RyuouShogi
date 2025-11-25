@@ -1,40 +1,41 @@
 version: '3.8'
 
 services:
-    #api: #backend
-    #    build: ./backend
-    #    container_name: ryuoushogi_api
-    #    ports:
-    #        - "8000:8000"
-    #    volumes:
-    #        - ./backend:/app
-    #        - ./engines:/app/engines
-    #    image:
-    web: #frontend
-      build: ./apache
-      container_name: myapache
-      ports:
-        - "80:80"
-      volumes:
+  web:
+    build: ./apache
+    container_name: myapache
+    ports:
+      - "80:80"
+    volumes:
       - ../web-data:/usr/local/apache2/htdocs/
-      #path: "$(pwd)/web-data:/usr/local/apache2/htdocs"
-      restart: always
-    db: #database
-        image: mysql:latest
-        container_name: test-mysql
-        environment:
-            POSTGRES_USER: root
-            POSTGRES_PASSWORD: mydb
-            MYSQL_ROOT_PASSWORD: test
-            MYSQL_DATABASE: test
-            MYSQL_USER: test
-            MYSQL_PASSWORD: test
-        ports:
-            - "3306:3306"
-        volumes:
-            - shogi-data:/var/lib/mysql
-        depends_on:
-            - web
-        restart: always
+    restart: always
+
+  db:
+    image: mysql:8.0
+    container_name: test-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: test
+      MYSQL_USER: test
+      MYSQL_PASSWORD: testpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - shogi-data:/var/lib/mysql
+    restart: always
+
+  phpmyadmin:
+    image: arm64v8/phpmyadmin
+    container_name: myadmin
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: rootpass
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+    restart: always
+
 volumes:
   shogi-data:
